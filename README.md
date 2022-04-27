@@ -1,3 +1,6 @@
+Projeto 2 do PT da CJR 
+Dupla: Nicole Sena e Israel Teles
+
 # Getting Started with Create React App
 
 This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
