@@ -1,73 +1,63 @@
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 
-function Pagination({ items, limitItems, setPage, actualPage, setActualPage }) {
-  const [totalPage, setTotalPage] = useState(
-    Math.ceil(items.length / limitItems)
-  );
-  const [paginationNav, setPaginationNav] = useState(() => {
-    let aux = [];
-    for (let i = 1; i <= totalPage; i++) {
-      aux.push(i);
-    }
-    return aux;
-  });
+function Pagination({
+  data,
+  pageSize,
+  setCurrentPageData,
+  currentPage,
+  setCurrentPage,
+}) {
+  // Total de páginas
+  const totalPage = Math.ceil(data.length / pageSize);
+
+  // Quantidade de botões e seus indexs
+  let labelIndexs = [];
+  for (let i = 1; i <= totalPage; i++) {
+    labelIndexs.push(i);
+  }
 
   useEffect(() => {
-    listItems(actualPage);
-  }, []);
+    goToPage(currentPage);
+    console.log(currentPage);
+  }, [currentPage, data]);
 
-  function listItems(pageNumber) {
-    let result = [];
-    let count = pageNumber * limitItems - limitItems;
-    let delimiter = count + limitItems;
+  function goToPage(pageNumber) {
+    let res = [];
+    let count = pageNumber * pageSize - pageSize;
+    let delimiter = count + pageSize;
+
+    // Somente se a pagina for menor que o total de páginas
     if (pageNumber <= totalPage) {
-      // console.log("COUNT", count);
       for (let i = count; i < delimiter; i++) {
-        if (items[i] != null) {
-          result.push(items[i]);
+        if (data[i]) {
+          res.push(data[i]);
         }
-        count++;
       }
-      // console.log(
-      //   "RESULT",
-      //   result,
-      //   "DELIMITER",
-      //   delimiter,
-      //   "PAGENUMBER",
-      //   pageNumber,
-      //   "TOTALPAGE",
-      //   totalPage,
-      //   "LIMITITEMS",
-      //   limitItems,
-      //   "items",
-      //   items
-      // );
-      if (result.length !== 0) {
-        setPage(result);
+      if (res.length !== 0 || data.length === 0) {
+        setCurrentPageData(res);
+        setCurrentPage(pageNumber);
       }
-      setActualPage(pageNumber);
+    } else {
+      goToPage(pageNumber - 1);
     }
   }
-  // Exemplos de uso:  var next = ['Next 1','Next 2','Next 3','Next 4','Next 5'];
-  // var resultNext = listItems(next, 1, 2); var resultNext2 = listItems(next, 2, 2);
-  // var resultNext3 = listItems(next, 3, 2);
 
   return (
     <div className="pagination">
-      <button type="button" onClick={() => listItems(actualPage - 1)}>
+      <button type="button" onClick={() => goToPage(currentPage - 1)}>
         &lt;&lt;
       </button>
-      {paginationNav.map((pageNumber, index) => (
+      {labelIndexs.map((pageNumber, index) => (
         <button
-          type="button"
-          className={pageNumber === actualPage ? "active" : ""}
           key={index}
-          onClick={() => listItems(pageNumber)}
+          type="button"
+          className={pageNumber === currentPage ? "active" : ""}
+          onClick={() => goToPage(pageNumber)}
         >
           {pageNumber}
         </button>
       ))}
-      <button type="button" onClick={() => listItems(actualPage + 1)}>
+      <button type="button" onClick={() => goToPage(currentPage + 1)}>
         &gt;&gt;
       </button>
     </div>
